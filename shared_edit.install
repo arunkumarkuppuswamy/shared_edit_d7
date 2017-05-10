@@ -1,0 +1,42 @@
+<?php
+/**
+ * @file
+ * Contains the install function for Shared Edit.
+ */
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function shared_edit_uninstall() {
+  db_delete('variable')
+    ->condition('name', '%' . db_like('shared_edit_') . '%', 'LIKE')
+    ->execute();
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function shared_edit_schema() {
+  $schema = array();
+  $schema['shared_edit'] = array(
+    'description' => 'Stores the users who can edit nodes.',
+    'fields' => array(
+      'nid' => array(
+        'description' => 'The node id.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'uid' => array(
+        'description' => 'The user id for the user who can edit the node.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+    ),
+    'unique keys' => array(
+      'nid' => array('nid', 'uid'),
+    ),
+  );
+  return $schema;
+}
